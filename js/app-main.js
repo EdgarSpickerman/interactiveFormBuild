@@ -43,15 +43,59 @@ function getTotalAmount() {
 
 /* ********************************************************Validation functions******************************************************** */
 function emailValidator() {
-    let result = /^[A-Za-z0-9\._-]*[@][A-Za-z]*[\.][a-zA-Z]{2,4}$/.test($('input#mail').val());
+    $('input#mail').parent().children('span:contains("email")').remove();
+    $('input#mail').attr('style', 'background-color:#ff4c4c');
+    var validity = false;
+    if ($('input#mail').val().length === 0) {
+        $('input#name').parent().children('legend').after('<span style="color:red">Please enter your email address.<br></span>');
+    } else {
+        if (/^[A-Za-z0-9\._-]*[@][A-Za-z]*[\.][a-zA-Z]{2,4}$/.test($('input#mail').val())) {
+            $('input#mail').attr('style', 'background-color:#66ff66');
+            validity = true;
+        } else {
+            $('input#name').parent().children('legend').after('<span style="color:red">Please enter a valid email address.For example 1234@example.com<br></span>');
+        }
+    }
+    return validity;
 }
 
 function ccValidator() {
-    return /^[0-9]{13,16}$/.test($('input#cc-num').val());
+    $('#credit-card').parent().children('span:contains("credit card")').remove();
+    $('input#cc-num').attr('style', 'background-color:#ff4c4c');
+    var validity = false;
+    if ($('input#cc-num').val().length === 0) {
+        $('#credit-card').parent().children('legend').after('<span style="color:red">Please enter your 13 to 16 digit credit card number.<br></span>');
+    } else if ($('input#cc-num').val().length < 13) {
+        $('#credit-card').parent().children('legend').after('<span style="color:red">You entered a invalid credit card number. Credit card numbers need to be at least 13 digits long.<br></span>');
+    } else if ($('input#cc-num').val().length > 16) {
+        $('#credit-card').parent().children('legend').after('<span style="color:red">You entered a invalid credit card number. Credit card numbers need to be no more than 16 digits long.<br></span>');
+    } else {
+        if (/^[0-9]{13,16}$/.test($('input#cc-num').val())) {
+            $('input#cc-num').attr('style', 'background-color:#66ff66');
+            validity = true;
+        } else {
+            $('#credit-card').parent().children('legend').after('<span style="color:red">You entered a invalid credit card number.<br></span>');
+        }
+    }
+    return validity;
 }
 
 function nameValidator() {
-    return /^[A-Za-z\s]{1,50}$/.test($('input#name').val());
+    $('input#name').parent().children('span:contains("name")').remove();
+    $('input#name').attr('style', 'background-color:#ff4c4c');
+    var validity = false;
+    if ($('input#name').val().length === 0) {
+        $('input#name').parent().children('legend').after('<span style="color:red">Please enter your name.<br></span>');
+    } else {
+        if (/^[A-Za-z\s]{1,50}$/.test($('input#name').val())) {
+            $('input#name').attr('style', 'background-color:#66ff66');
+            validity = true;
+            console.log('true');
+        } else {
+            $('input#name').parent().children('legend').after('<span style="color:red">Please enter a valid name with no special characters or digits.<br></span>');
+        }
+    }
+    return validity;
 }
 
 function zipValidator() {
@@ -59,28 +103,28 @@ function zipValidator() {
 }
 
 function cvvValidator() {
-    $('#credit-card').parent().children('span').remove();
-    var result = false;
+    $('#credit-card').parent().children('span:contains("cvv")').remove();
+    var validity = false;
     $('input#cvv').attr('style', 'background-color:#ff4c4c');
     if ($('input#cvv').val().length === 0) {
-        $('#credit-card').parent().children('legend').after('<span style="color:red">Please enter the 3 digit code locatated at the back of your card.</span>')
+        $('#credit-card').parent().children('legend').after('<span style="color:red">Please enter the 3 digit cvv code locatated at the back of your card.<br></span>');
     } else if ($('input#cvv').val().length < 3) {
-        $('#credit-card').parent().children('legend').after('<span style="color:red">The CVV code must be 3 digits long.</span>')
+        $('#credit-card').parent().children('legend').after('<span style="color:red">The cvv code must be 3 digits long.<br></span>');
     } else if ($('input#cvv').val().length === 3) {
         if (/[0-9]{3}$/.test($('input#cvv').val())) {
             $('input#cvv').attr('style', 'background-color:#66ff66');
-            result = true;
+            validity = true;
         } else {
-            $('#credit-card').parent().children('legend').after('<span style="color:red">You entered an invalid 3 character code.</span>')
+            $('#credit-card').parent().children('legend').after('<span style="color:red">You entered an invalid 3 digit cvv code.<br></span>');
         }
     } else {
-        $('#credit-card').parent().children('legend').after('<span style="color:red">You entered too many digits for your cvv code.</span>')
+        $('#credit-card').parent().children('legend').after('<span style="color:red">You entered too many digits for your cvv code.<br></span>');
     }
-    return result;
+    return validity;
 }
 
 function activitiesValidator() {
-    $('fieldset.activities legend').children().remove();
+    $('fieldset.activities').children('span').remove();
     let result = $('fieldset.activities input:checked').length;
     if (result > 0) {
         return true;
@@ -94,7 +138,7 @@ function activitiesValidator() {
 $('input#name').keyup(() => {
     nameValidator();
 });
-$('input#email').keyup(() => {
+$('input#mail').keyup(() => {
     emailValidator();
 });
 $('#title').change(() => {
@@ -108,6 +152,10 @@ $('#design').change(() => {
     selectedDesign === 'Theme - JS Puns' ? showColors('JS Puns shirt only') : showColors('JS shirt only');
 }); //1) gets the html of the selected option. 2) color options show if any theme is selected 3) displays only the colors for each design.
 
+$('fieldset.activities input').on('click',() => {
+    $('fieldset.activities').children('span').remove();
+});
+
 $('fieldset.activities').change((e) => {
     disableConflictedEvents(e.target.name);
     getTotalAmount();
@@ -115,6 +163,7 @@ $('fieldset.activities').change((e) => {
 
 $('#payment').change(() => {
     $('div p').attr('style', 'display:none');
+    $('#credit-card').parent().children('span').remove();
     $('div#credit-card').attr('style', 'display:none');
     $('#payment option:selected').val() === 'credit card' ? $('div#credit-card').removeAttr('style') : '';
     $('#payment option:selected').val() === 'paypal' ? $('p:contains("PayPal option")').removeAttr('style') : '';
@@ -134,16 +183,26 @@ $('input#cvv').keyup(() => {
 });
 
 $('[type="submit"]').on('click', (e) => {
-    activitiesValidator();
-    cvvValidator();
-    emailValidator();
-    ccValidator();
-    nameValidator();
-    zipValidator();
-    if (emailValidator() && ccValidator() && nameValidator() && zipValidator() && cvvValidator() && activitiesValidator()) {
-        alert('successfully completed form');
+    var valid = false;
+    if ($('#credit-card').css('display') === 'none') {
+        activitiesValidator();
+        emailValidator();
+        nameValidator();
+        if (emailValidator() && nameValidator() && activitiesValidator()) {
+            valid = true;
+        }
     } else {
-        alert('Form has errors please check');
+        activitiesValidator();
+        emailValidator();
+        nameValidator();
+        cvvValidator();
+        ccValidator();
+        zipValidator();
+        if (emailValidator() && ccValidator() && nameValidator() && zipValidator() && cvvValidator() && activitiesValidator()) {
+            valid = true;
+        }
+    }
+    if (!valid) {
         e.preventDefault();
     }
 }); //calls each validation method, evaluates if any fail. if any fail it prevents the user from submittig. if no fails the user submits the form. User is notified of either sucessful or unsuccessful submits.
