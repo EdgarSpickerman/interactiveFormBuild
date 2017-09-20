@@ -179,11 +179,12 @@ $('fieldset.activities').change((e) => {
 $('#payment').change(() => {
     $('div p').attr('style', 'display:none');
     $('#credit-card').parent().children('span').remove();
+    $('#credit-card .col input').removeAttr('style');
     $('div#credit-card').attr('style', 'display:none');
     $('#payment option:selected').val() === 'credit card' ? $('div#credit-card').removeAttr('style') : '';
     $('#payment option:selected').val() === 'paypal' ? $('p:contains("PayPal option")').removeAttr('style') : '';
     $('#payment option:selected').val() === 'bitcoin' ? $('p:contains("Bitcoin option")').removeAttr('style') : '';
-}); //1) hides the paypal and bitcoin paragraph 2) removed any error messages if payment is switched 3) shows information only for the correct selected option.
+}); //1) hides the paypal and bitcoin paragraph 2) if payment is switched removes any previous error messages/indication 3) shows information only for the correct selected option.
 
 //submit events
 $('[type="submit"]').on('click', (e) => {
