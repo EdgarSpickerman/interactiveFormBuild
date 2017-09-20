@@ -42,7 +42,7 @@ function getTotalAmount() {
 }
 
 /* ********************************************************Validation functions******************************************************** */
-function emailValidator() => {
+function emailValidator() {
     return /^[A-Za-z0-9\._-]*[@][A-Za-z]*[\.][a-zA-Z]{2,4}$/.test($('input#mail').val());
 }
 
@@ -51,7 +51,7 @@ function ccValidator() {
 }
 
 function nameValidator() {
-    return /^[A-Za-z\s]*$/.test($('input#name').val());
+    return /^[A-Za-z\s]{1,50}$/.test($('input#name').val());
 }
 
 function zipValidator() {
