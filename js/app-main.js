@@ -43,7 +43,7 @@ function getTotalAmount() {
 
 /* ********************************************************Validation functions******************************************************** */
 function emailValidator() {
-    return /^[A-Za-z0-9\._-]*[@][A-Za-z]*[\.][a-zA-Z]{2,4}$/.test($('input#mail').val());
+    let result = /^[A-Za-z0-9\._-]*[@][A-Za-z]*[\.][a-zA-Z]{2,4}$/.test($('input#mail').val());
 }
 
 function ccValidator() {
@@ -59,13 +59,44 @@ function zipValidator() {
 }
 
 function cvvValidator() {
-    return /[0-9]{3}$/.test($('input#cvv').val());
+    $('#credit-card').parent().children('span').remove();
+    var result = false;
+    $('input#cvv').attr('style', 'background-color:#ff4c4c');
+    if ($('input#cvv').val().length === 0) {
+        $('#credit-card').parent().children('legend').after('<span style="color:red">Please enter the 3 digit code locatated at the back of your card.</span>')
+    } else if ($('input#cvv').val().length < 3) {
+        $('#credit-card').parent().children('legend').after('<span style="color:red">The CVV code must be 3 digits long.</span>')
+    } else if ($('input#cvv').val().length === 3) {
+        if (/[0-9]{3}$/.test($('input#cvv').val())) {
+            $('input#cvv').attr('style', 'background-color:#66ff66');
+            result = true;
+        } else {
+            $('#credit-card').parent().children('legend').after('<span style="color:red">You entered an invalid 3 character code.</span>')
+        }
+    } else {
+        $('#credit-card').parent().children('legend').after('<span style="color:red">You entered too many digits for your cvv code.</span>')
+    }
+    return result;
 }
 
 function activitiesValidator() {
-    return $('fieldset.activities input:checked').length > 0;
+    $('fieldset.activities legend').children().remove();
+    let result = $('fieldset.activities input:checked').length;
+    if (result > 0) {
+        return true;
+    } else {
+        $('fieldset.activities').children('legend').after('<span style="color:red">Please select at least 1 activity to attend.</span>');
+        return false;
+    }
 }
+
 /* ********************************************************Events******************************************************** */
+$('input#name').keyup(() => {
+    nameValidator();
+});
+$('input#email').keyup(() => {
+    emailValidator();
+});
 $('#title').change(() => {
     $('#other-title').attr('style', 'display:none');
     $('#title option:selected').val() === 'other' ? $('#other-title').removeAttr('style') : '';
@@ -73,7 +104,7 @@ $('#title').change(() => {
 
 $('#design').change(() => {
     let selectedDesign = $('select#design option:selected').html();
-    selectedDesign !== 'Select Theme' ? $('#colors-js-puns').show() : $('#colors-js-puns').hide();
+    selectedDesign !== 'Select Theme' ? $('#colors-js-puns').removeAttr('style') : $('#colors-js-puns').attr('style','display:none');
     selectedDesign === 'Theme - JS Puns' ? showColors('JS Puns shirt only') : showColors('JS shirt only');
 }); //1) gets the html of the selected option. 2) color options show if any theme is selected 3) displays only the colors for each design.
 
@@ -90,19 +121,38 @@ $('#payment').change(() => {
     $('#payment option:selected').val() === 'bitcoin' ? $('p:contains("Bitcoin option")').removeAttr('style') : '';
 }); //1) hides the paypal and bitcoin paragraph 2) shows information only for the correct selected option.
 
+$('input#cc-num').keyup(() => {
+    ccValidator();
+});
+
+$('input#zip').keyup(() => {
+    zipValidator();
+});
+
+$('input#cvv').keyup(() => {
+    cvvValidator();
+});
+
 $('[type="submit"]').on('click', (e) => {
+    activitiesValidator();
+    cvvValidator();
+    emailValidator();
+    ccValidator();
+    nameValidator();
+    zipValidator();
     if (emailValidator() && ccValidator() && nameValidator() && zipValidator() && cvvValidator() && activitiesValidator()) {
         alert('successfully completed form');
     } else {
         alert('Form has errors please check');
         e.preventDefault();
     }
-});
+}); //calls each validation method, evaluates if any fail. if any fail it prevents the user from submittig. if no fails the user submits the form. User is notified of either sucessful or unsuccessful submits.
 
 /* ********************************************************Global scope and default actions******************************************************* */
 $('input#name').focus();                                                    //focus on the first text area
 $('#other-title').attr('style', 'display:none');                          //hiding the other job role text field
 $('#colors-js-puns').attr('style', 'display:none');                        // hiding the color options 
 $('#payment').val('credit card');                                         // selecting the cc as default
+$('select#payment option').first().remove();                              //removes the select payment option since we default to cc
 $('div p').attr('style', 'display:none');                                 // hiding the paypal and bitcoin text since cc is default option
 $colorOptions = $('#color option');                                       // get all availble color choices
