@@ -11,9 +11,10 @@ function showColors(design) {
 /* ********************************************************Validation functions******************************************************** */
 
 /* ********************************************************Events******************************************************** */
-$('#other-title').change(() => {
-
-});
+$('#title').change(() => {
+    $('#other-title').attr('style', 'display:none');
+    $('option:selected').val() === 'other' ? $('#other-title').removeAttr('style') : '';
+}); //  1) hides the other title text field 2) only shows it when its selected by the user
 
 $('#design').change(() => {
     let selectedDesign = $('select#design option:selected').html();
