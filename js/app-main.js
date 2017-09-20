@@ -7,15 +7,24 @@ function showColors(design) {
         }
     }
 } //1) erases the html contents of the color select 2) sets the content of the color select to the colors based on design
-function conflict(clickedEvent,'event', 'conflictEvent') {
+function conflict(clickedEvent,event, conflictEvent) {
+    if (clickedEvent === event) {
+        if ($(`[name="${conflictEvent}"]`).attr('disabled') === 'disabled') {                   // checks to see if the conflicted events checkbox is disabled.
+            $(`[name="${conflictEvent}"]`).removeAttr('disabled');                              // enables the disabled checkbox
+            $(`[name="${conflictEvent}"]`).parent().removeAttr('style');                        // removes the gray textcolor
+        } else {
+            $(`[name="${conflictEvent}"]`).attr('disabled', 'true');                            // disables the checkbox of the conflicted event
+            $(`[name="${conflictEvent}"]`).parent().css('color', 'gray');                       // sets the conflicted events textcolor to gray
 
+        }
+    }
 }
 
 function disableConflictedEvents(clickedEvent) {
-    conflict(clickedEvent,'event','conflictEvent');
-    conflict(clickedEvent, 'event', 'conflictEvent');
-    conflict(clickedEvent, 'event', 'conflictEvent');
-    conflict(clickedEvent, 'event', 'conflictEvent');
+    conflict(clickedEvent, 'js-frameworks','express');
+    conflict(clickedEvent, 'express', 'js-frameworks');
+    conflict(clickedEvent, 'node', 'js-libs');
+    conflict(clickedEvent, 'js-libs', 'node');
 } //checks all known conflicts
 
 function getTotalAmount() {
