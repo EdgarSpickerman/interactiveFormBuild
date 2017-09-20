@@ -28,7 +28,17 @@ function disableConflictedEvents(clickedEvent) {
 } //checks all known conflicts
 
 function getTotalAmount() {
-
+    $('.activities p').remove();                                            //removes the total paragraph from the dom
+    let totalAmount = 0;
+    if ($('input:checked').length > 0) {
+        for (var i = 0; i < $('input:checked').length; i++) {
+            let labelString = $('input:checked')[i].nextSibling.data;       //traverses to the next sibling and grabs the data(text) of the associated label tag.
+            let endPos = labelString.length;                                //retrieves the count of the characters in the label assoicated with each checkbox checked
+            let startPos = 1 + labelString.indexOf('$');                    //finds and returns the starting position of the $ sign adds 1 since we dont want the $ sign.
+            totalAmount += parseInt(labelString.slice(startPos, endPos));
+        }
+        $('.activities').append(`<p>Total: $${totalAmount}</p>`);
+    }
 }
 
 /* ********************************************************Validation functions******************************************************** */
