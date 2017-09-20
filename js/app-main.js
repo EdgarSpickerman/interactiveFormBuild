@@ -21,7 +21,7 @@ function conflict(clickedEvent,event, conflictEvent) {
 }
 
 function disableConflictedEvents(clickedEvent) {
-    conflict(clickedEvent, 'js-frameworks','express');
+    conflict(clickedEvent, 'js-frameworks','express'); 
     conflict(clickedEvent, 'express', 'js-frameworks');
     conflict(clickedEvent, 'node', 'js-libs');
     conflict(clickedEvent, 'js-libs', 'node');
@@ -42,7 +42,29 @@ function getTotalAmount() {
 }
 
 /* ********************************************************Validation functions******************************************************** */
+function emailValidator() => {
+    return /^[A-Za-z0-9\._-]*[@][A-Za-z]*[\.][a-zA-Z]{2,4}$/.test($('input#mail').val());
+}
 
+function ccValidator() {
+    return /^[0-9]{13,16}$/.test($('input#cc-num').val());
+}
+
+function nameValidator() {
+    return /^[A-Za-z\s]*$/.test($('input#name').val());
+}
+
+function zipValidator() {
+    return /^[0-9]{5}$/.test($('input#zip').val());
+}
+
+function cvvValidator() {
+    return /[0-9]{3}$/.test($('input#cvv').val());
+}
+
+function activitiesValidator() {
+    return $('fieldset.activities input:checked').length > 0;
+}
 /* ********************************************************Events******************************************************** */
 $('#title').change(() => {
     $('#other-title').attr('style', 'display:none');
@@ -67,6 +89,15 @@ $('#payment').change(() => {
     $('#payment option:selected').val() === 'paypal' ? $('p:contains("PayPal option")').removeAttr('style') : '';
     $('#payment option:selected').val() === 'bitcoin' ? $('p:contains("Bitcoin option")').removeAttr('style') : '';
 }); //1) hides the paypal and bitcoin paragraph 2) shows information only for the correct selected option.
+
+$('[type="submit"]').on('click', (e) => {
+    if (emailValidator() && ccValidator() && nameValidator() && zipValidator() && cvvValidator() && activitiesValidator()) {
+        alert('successfully completed form');
+    } else {
+        alert('Form has errors please check');
+        e.preventDefault();
+    }
+});
 
 /* ********************************************************Global scope and default actions******************************************************* */
 $('input#name').focus();                                                    //focus on the first text area
