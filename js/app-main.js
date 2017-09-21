@@ -189,6 +189,7 @@ $('#payment').change(() => {
 //submit events
 $('[type="submit"]').on('click', (e) => {
     var valid = false;
+    const message='You successfully completed the form'
     activitiesValidator();
     emailValidator();
     nameValidator();
@@ -200,9 +201,7 @@ $('[type="submit"]').on('click', (e) => {
         zipValidator();
         emailValidator() && ccValidator() && nameValidator() && zipValidator() && cvvValidator() && activitiesValidator() ? valid = true:'';
     }
-    if (!valid) {
-        e.preventDefault();
-    }
+    !valid ? e.preventDefault() : alert(message);
 }); //depending if paying with CC calls either 3 or all validation methods. prevents the user from submittig if validation methods fail.
 
 /* ********************************************************Global scope and default actions******************************************************* */
