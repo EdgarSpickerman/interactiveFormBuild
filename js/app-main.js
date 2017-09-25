@@ -30,10 +30,8 @@ function getTotalAmount() {
     let totalAmount = 0;
     if ($('input:checked').length > 0) {
         for (var i = 0; i < $('input:checked').length; i++) {
-            let labelString = $('input:checked')[i].nextSibling.data;       //traverses to the next sibling and grabs the data(text) of the associated label tag.
-            let endPos = labelString.length;                                //retrieves the count of the characters in the label assoicated with each checkbox checked
-            let startPos = 1 + labelString.indexOf('$');                    //finds and returns the starting position of the $ sign adds 1 since we dont want the $ sign.
-            totalAmount += parseInt(labelString.slice(startPos, endPos));
+            let amountAsString = $('input:checked')[i].nextSibling.data.match(/[$][0-9]{3}/)[0].match(/\d{3}/);
+            totalAmount += parseInt(amountAsString);
         }
         $('.activities').append(`<p>Total: $${totalAmount}</p>`);
     }
@@ -139,21 +137,11 @@ function cvvValidator() {
 
 /* ********************************************************Events******************************************************** */
 //keyup events
-$('input#cc-num').keyup(() => {
-    ccValidator();
-}); //keyboard event listener for the cc field
-$('input#zip').keyup(() => {
-    zipValidator();
-});//keyboard event listener for the zip field
-$('input#cvv').keyup(() => {
-    cvvValidator();
-});//keyboard event listener for the ccv field
-$('input#name').keyup(() => {
-    nameValidator();
-});//keyboard event listener for the name field
-$('input#mail').keyup(() => {
-    emailValidator();
-});//keyboard event listener for the email field
+$('input#cc-num').keyup( ccValidator); //keyboard event listener for the cc field
+$('input#zip').keyup( zipValidator); //keyboard event listener for the zip field
+$('input#cvv').keyup( cvvValidator); //keyboard event listener for the ccv field
+$('input#name').keyup( nameValidator); //keyboard event listener for the name field
+$('input#mail').keyup( emailValidator);  //keyboard event listener for the email field
 
 //change events
 $('#title').change(() => {
@@ -167,9 +155,7 @@ $('#design').change(() => {
     selectedDesign === 'Theme - JS Puns' ? showColors('JS Puns shirt only') : showColors('JS shirt only');
 }); //1) gets the html of the selected option. 2) color options show if any theme is selected 3) displays only the colors for each design.
 
-$('fieldset.activities input').on('click',() => {
-    $('fieldset.activities').children('span').remove();
-}); //
+$('fieldset.activities input').on('click',() => $('fieldset.activities').children('span').remove());
 
 $('fieldset.activities').change((e) => {
     disableConflictedEvents(e.target.name);
@@ -177,10 +163,9 @@ $('fieldset.activities').change((e) => {
 }); //
 
 $('#payment').change(() => {
-    $('div p').attr('style', 'display:none');
+    $('div p, div#credit-card').attr('style', 'display:none');
     $('#credit-card').parent().children('span').remove();
     $('#credit-card .col input').removeAttr('style');
-    $('div#credit-card').attr('style', 'display:none');
     $('#payment option:selected').val() === 'credit card' ? $('div#credit-card').removeAttr('style') : '';
     $('#payment option:selected').val() === 'paypal' ? $('p:contains("PayPal option")').removeAttr('style') : '';
     $('#payment option:selected').val() === 'bitcoin' ? $('p:contains("Bitcoin option")').removeAttr('style') : '';
@@ -206,9 +191,7 @@ $('[type="submit"]').on('click', (e) => {
 
 /* ********************************************************Global scope and default actions******************************************************* */
 $('input#name').focus();                                                    //focus on the first text area
-$('#other-title').attr('style', 'display:none');                          //hiding the other job role text field
-$('#colors-js-puns').attr('style', 'display:none');                        // hiding the color options 
+$('#other-title, div p, #colors-js-puns').attr('style', 'display:none');    //hiding the other job role text field, the color options paypal and bitcoin text
 $('#payment').val('credit card');                                         // selecting the cc as default
 $('select#payment option').first().remove();                              //removes the select payment option since we default to cc
-$('div p').attr('style', 'display:none');                                 // hiding the paypal and bitcoin text since cc is default option
 $colorOptions = $('#color option');                                       // get all availble color choices
